@@ -1,0 +1,19 @@
+const BOT_SECRET = '2084565886:AAFf4o05wC6xy_fbA2pzvGx8BNjAPAmphcM';
+const CHAT_ID = '-4207397995';
+
+const now = new Date();
+now.setDate(now.getDate() - 1);
+const date = now.toLocaleDateString('FR');
+
+const xMKTbotnotifications = '11YxUZ1VSTZB1VpzCVeoYJhiCUtc8bIHnhtAegKVAIvU';
+const ss = SpreadsheetApp.openById(xMKTbotnotifications);
+
+const sheetnotifications = ss.getSheetByName('Visa10$');
+const text = sheetnotifications.getRange("q2").getValue().toLocaleString('DE');
+const MSG = `💳 Báo cáo tình trạng sử dụng thẻ 💳:
+
+${text}`
+
+function notification() {
+  UrlFetchApp.fetch("https://api.telegram.org/bot" + BOT_SECRET + "/sendMessage?text=" + encodeURIComponent(MSG) + "&chat_id=" + CHAT_ID + "&parse_mode=HTML");
+}
