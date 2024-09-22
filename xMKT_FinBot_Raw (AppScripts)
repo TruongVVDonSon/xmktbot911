@@ -1,0 +1,49 @@
+function doPost(e) {
+  // Parse the incoming request data
+  var content = JSON.parse(e.postData.contents);
+  
+  // Open the target Google Sheet by ID
+  var sheet = SpreadsheetApp.openById('1BOoMFD_lOYOm6XfW7yVcfeS_ipF6ZMS_eaaa-N811j4').getSheetByName('Raw');
+  
+  // Append the content as a new row
+  sheet.appendRow([content.time,content.bank, content.acc, content.bal, content.raw, content.trans]); // Customize this line as needed
+   sheet.sort(1, false);
+  // Return a success response
+  return ContentService.createTextOutput(JSON.stringify({status: 'success'})).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doGet(e) {
+ // Open the target Google Sheet by ID
+  var sheet = SpreadsheetApp.openById('1BOoMFD_lOYOm6XfW7yVcfeS_ipF6ZMS_eaaa-N811j4').getSheetByName('Bank');
+  
+  // Get the data range (all data from A:D, starting from row 2)
+  var dataRange = sheet.getRange(2, 1, sheet.getLastRow() - 1, 12); // from row 2, column A to E
+  
+  // Get the values in the range as a 2D array
+  var data = dataRange.getValues();
+  
+  // Get headers (keys for the objects) from the first row (A1:D1)
+  var headers = sheet.getRange(1, 1, 1, 12).getValues()[0];
+  
+  // Initialize an empty array to hold the objects
+  var jsonArray = [];
+  
+  // Loop through each row of data
+  for (var i = 0; i < data.length; i++) {
+    if (data[i].some(cell => cell !== "")) {
+    var rowObject = {};
+    
+    // Map the values of each row to the corresponding header key
+    
+    for (var j = 0; j < headers.length; j++) {
+      rowObject[headers[j]] = data[i][j]; // Use the headers as keys and assign the corresponding row values
+    }
+    
+    // Add the row object to the JSON array
+    jsonArray.push(rowObject);
+    }
+  }
+  
+  // Return the JSON array as a string
+  return ContentService.createTextOutput(JSON.stringify(jsonArray)).setMimeType(ContentService.MimeType.JSON);
+}
